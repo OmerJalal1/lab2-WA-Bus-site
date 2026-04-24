@@ -1,0 +1,109 @@
+{% extends "routes/base.html" %}
+
+{% block title %}{{ route.origin }} to {{ route.destination }}{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 style="font-size: 2.8rem;">
+            <i class="fas fa-bus" style="margin-right: 0.5rem; color: #ffd700;"></i>
+            {{ route.origin.name }} 
+            <span style="color: #ffd700; font-weight: 300; margin: 0 0.5rem;">→</span>
+            {{ route.destination.name }}
+        </h2>
+        <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; font-weight: 500; margin-top: 0.5rem;">
+            <i class="fas fa-map-marker-alt"></i> {{ route.origin.city }} to {{ route.destination.city }} | 
+            <i class="fas fa-clock"></i> {{ route.duration }} minutes
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Passengers Section -->
+        <div class="card mb-4" style="border-top: 5px solid #27ae60;">
+            <div class="card-header" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.5rem;">
+                <h5 style="margin: 0; font-weight: 700; font-size: 1.3rem;">
+                    <i class="fas fa-users" style="margin-right: 0.5rem;"></i>
+                    Booked Passengers <span class="badge" style="background: rgba(255,255,255,0.3); margin-left: 0.5rem;">{{ passengers.count }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if passengers %}
+                    <ul class="list-group">
+                        {% for passenger in passengers %}
+                            <li class="list-group-item" style="padding: 1rem; border-left: 4px solid #3498db;">
+                                <i class="fas fa-user-circle" style="color: #3498db; margin-right: 0.8rem; font-size: 1.2rem;"></i>
+                                <strong style="color: #1a237e; font-size: 1.05rem;">{{ passenger.username }}</strong>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p style="text-align: center; padding: 2rem; color: #7f8c8d; font-size: 1.1rem;">
+                        <i class="fas fa-inbox" style="color: #95a5a6; font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                        No passengers booked yet. Be the first to book this route!
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Booking Section -->
+        <div class="card" style="border-top: 5px solid #e74c3c;">
+            <div class="card-header" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.5rem;">
+                <h5 style="margin: 0; font-weight: 700; font-size: 1.3rem;">
+                    <i class="fas fa-ticket-alt" style="margin-right: 0.5rem;"></i>
+                    Book Your Seat
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    {% if user in passengers %}
+                        <div class="alert alert-success" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; font-size: 1.1rem; padding: 1.5rem;">
+                            <i class="fas fa-check-circle" style="margin-right: 0.5rem; font-size: 1.3rem;"></i>
+                            <strong>Confirmed!</strong> You are booked on this route.
+                        </div>
+                        <form method="POST" action="{% url 'unbook' route.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100" style="padding: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-times-circle" style="margin-right: 0.5rem;"></i>
+                                Cancel Booking
+                            </button>
+                        </form>
+                    {% else %}
+                        <p style="color: #555; margin-bottom: 1.5rem; font-size: 1.05rem; font-weight: 500;">
+                            <i class="fas fa-seat" style="color: #f39c12; margin-right: 0.5rem;"></i>
+                            You are not yet booked on this route. Click the button below to reserve your seat now.
+                        </p>
+                        <form method="POST" action="{% url 'book' route.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100" style="padding: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-check" style="margin-right: 0.5rem;"></i>
+                                Book Your Seat
+                            </button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); color: #856404; font-size: 1.1rem; padding: 1.5rem;">
+                        <i class="fas fa-lock" style="margin-right: 0.5rem; font-size: 1.3rem;"></i>
+                        <strong>Login Required</strong> to book a seat on this route.
+                    </div>
+                    <a href="{% url 'login' %}" class="btn btn-primary w-100" style="padding: 1rem; font-size: 1.1rem; margin-bottom: 1rem;">
+                        <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
+                        Login to Book
+                    </a>
+                    <p class="text-center" style="color: rgba(255,255,255,0.9);">
+                        Don't have an account? <a href="{% url 'register' %}" style="color: #ffd700; font-weight: 700; text-decoration: none;">Register here</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>
+        Back to Routes
+    </a>
+</div>
+{% endblock %}

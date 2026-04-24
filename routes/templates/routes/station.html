@@ -1,0 +1,88 @@
+{% extends "routes/base.html" %}
+
+{% block title %}{{ station.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <h2 style="font-size: 2.8rem; color: white;">
+        {{ station.name }}
+    </h2>
+    <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem; font-weight: 500;">
+        {{ station.city }}
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-5">
+        <div class="card" style="border-top: 4px solid #3498db; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideInLeft 0.6s ease-out;">
+            <div class="card-body">
+                <h4 class="card-title" style="color: #1a237e; font-weight: 700; margin-bottom: 1.5rem;">
+                    Routes Departing From Here
+                </h4>
+                {% if routes_from %}
+                    <div class="list-group">
+                        {% for route in routes_from %}
+                            <a href="{% url 'route' route.id %}" class="list-group-item list-group-item-action" style="border-left: 4px solid #3498db; margin-bottom: 0.5rem; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 style="color: #1a237e; font-weight: 700; margin: 0;">
+                                            → {{ route.destination.name }}
+                                        </h6>
+                                        <small style="color: #7f8c8d;">{{ route.destination.city }}</small>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="badge" style="background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%); padding: 0.5rem 0.8rem;">
+                                            {{ route.duration }} min
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: #7f8c8d; font-style: italic;">No routes departing from this station.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-5">
+        <div class="card" style="border-top: 4px solid #e74c3c; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: slideInRight 0.6s ease-out;">
+            <div class="card-body">
+                <h4 class="card-title" style="color: #1a237e; font-weight: 700; margin-bottom: 1.5rem;">
+                    Routes Arriving Here
+                </h4>
+                {% if routes_to %}
+                    <div class="list-group">
+                        {% for route in routes_to %}
+                            <a href="{% url 'route' route.id %}" class="list-group-item list-group-item-action" style="border-left: 4px solid #e74c3c; margin-bottom: 0.5rem; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 style="color: #1a237e; font-weight: 700; margin: 0;">
+                                            {{ route.origin.name }} →
+                                        </h6>
+                                        <small style="color: #7f8c8d;">{{ route.origin.city }}</small>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="badge" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 0.5rem 0.8rem;">
+                                            {{ route.duration }} min
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: #7f8c8d; font-style: italic;">No routes arriving at this station.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+        Back to All Routes
+    </a>
+</div>
+{% endblock %}

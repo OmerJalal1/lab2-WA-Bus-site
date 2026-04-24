@@ -1,0 +1,51 @@
+{% extends "routes/base.html" %}
+
+{% block title %}All Routes{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-8">
+        <h2 style="font-size: 2.5rem;">Available Routes</h2>
+        <p class="text-muted">Book your next bus journey with ease</p>
+    </div>
+</div>
+
+{% if routes %}
+    <div class="row">
+        {% for route in routes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 1.3rem;">
+                            {{ route.origin.name }}
+                            <span style="color: #95a5a6; font-weight: 300;">→</span>
+                            {{ route.destination.name }}
+                        </h5>
+                        <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            {{ route.origin.city }} to {{ route.destination.city }}
+                        </p>
+                        <hr style="border-color: #ecf0f1;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span style="color: #7f8c8d; font-size: 0.85rem;">Duration</span>
+                                <p style="margin: 0.25rem 0; font-weight: 600; color: #2c3e50;">{{ route.duration }} min</p>
+                            </div>
+                            <div>
+                                <span style="color: #7f8c8d; font-size: 0.85rem;">Passengers</span>
+                                <p style="margin: 0.25rem 0;">
+                                    <span class="badge" style="background: #3498db; font-size: 0.9rem;">{{ route.passengers.count }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{% url 'route' route.id %}" class="btn btn-primary btn-sm w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info" style="border-radius: 10px; border: none; background: #d1ecf1; color: #0c5460;">
+        <strong>No routes available yet.</strong> Check back soon for new routes!
+    </div>
+{% endif %}
+{% endblock %}

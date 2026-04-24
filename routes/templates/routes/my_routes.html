@@ -1,0 +1,76 @@
+{% extends "routes/base.html" %}
+
+{% block title %}My Routes{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-8">
+        <h2 style="font-size: 2.8rem;">My Booked Routes</h2>
+        <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; font-weight: 500;">Your upcoming journeys</p>
+    </div>
+</div>
+
+{% if booked_routes %}
+    <div class="row">
+        {% for route in booked_routes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100" style="border-left: 5px solid #27ae60; animation: fadeIn 0.8s ease-out; animation-fill-mode: backwards; animation-delay: {{ forloop.counter }}00ms;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 1.4rem; color: #1a237e;">
+                            {{ route.origin.name }}
+                            <span style="color: #95a5a6; font-weight: 300; margin: 0 0.3rem;">→</span>
+                            {{ route.destination.name }}
+                        </h5>
+                        <p style="color: #7f8c8d; font-size: 0.95rem; margin-bottom: 1rem;">
+                            {{ route.origin.city }} to {{ route.destination.city }}
+                        </p>
+                        <hr style="border-color: #ecf0f1; margin: 1rem 0;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span style="color: #7f8c8d; font-size: 0.85rem; font-weight: 600;">Duration</span>
+                                <p style="margin: 0.5rem 0; font-weight: 700; color: #1a237e; font-size: 1.2rem;">
+                                    {{ route.duration }} min
+                                </p>
+                            </div>
+                            <div>
+                                <span style="color: #7f8c8d; font-size: 0.85rem; font-weight: 600;">Passengers</span>
+                                <p style="margin: 0.5rem 0;">
+                                    <span class="badge" style="background: linear-gradient(135deg, #27ae60 0%, #16a085 100%); font-size: 1rem; padding: 0.6rem 1rem;">
+                                        {{ route.passengers.count }} booked
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'route' route.id %}" class="btn btn-info btn-sm flex-grow-1">
+                                View Details
+                            </a>
+                            <form method="post" action="{% url 'unbook' route.id %}" style="flex-grow: 1;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    Cancel Booking
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); color: #0c5460; font-size: 1.1rem; padding: 1.5rem; text-align: center;">
+        <strong>No bookings yet!</strong> Check out our available routes and book your first trip.
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'index' %}" class="btn btn-primary btn-lg">
+            Browse Routes
+        </a>
+    </div>
+{% endif %}
+
+<div class="mt-5">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+        Back to All Routes
+    </a>
+</div>
+{% endblock %}
